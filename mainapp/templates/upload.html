@@ -1,0 +1,6 @@
+<form action="{% url 'upload' %}" enctype="multipart/form-data" method="post">
+  {% csrf_token %}
+  <h1>Carica</h1>
+  {{ form }}
+  <input type="submit" value="Carica">
+</form>
