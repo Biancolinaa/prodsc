@@ -1,0 +1,26 @@
+<h1>List of Conferences</h1>
+
+Num of top conferences: {{ num_top }}<br />
+Num of very good conferences: {{ num_verygood }}<br />
+Num of good conferences: {{ num_good }}<br />
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Acronym</th>
+      <th>Rating</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for conference in conferences %}
+    <tr>
+      <td>
+        <a href="">{{ conference.name }}</a>
+      </td>
+      <td>{{ conference.acronym }}</td>
+      <td>{{ conference.ggs_rating }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

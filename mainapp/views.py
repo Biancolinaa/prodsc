@@ -2,6 +2,8 @@ import pandas as pd
 import math
 from io import BytesIO
 
+from django.db.models import Q
+from django.views.generic import ListView
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 
@@ -11,6 +13,23 @@ from .forms import UploadForm
 
 def index(request):
     return HttpResponse("Hello World")
+
+
+def conferences(request):
+    conferences = Conference.objects.all()
+    tops = conferences.filter(Q(ggs_rating="A++") | Q(ggs_rating="A+"))
+    verygood = conferences.filter(Q(ggs_rating="A") | Q(ggs_rating="A-"))
+    good = conferences.filter(Q(ggs_rating="B") | Q(ggs_rating="B-"))
+    return render(
+        request,
+        "conferences.html",
+        {
+            "conferences": conferences,
+            "num_top": len(tops),
+            "num_verygood": len(verygood),
+            "num_good": len(good),
+        },
+    )
 
 
 def authors(request):
