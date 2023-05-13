@@ -13,9 +13,25 @@ def index(request):
     return HttpResponse("Hello World")
 
 
+def authors(request):
+    authors = Author.objects.all()
+    return render(request, "authors.html", {"authors": authors})
+
+
 def author_info(request, author_id):
     author = get_object_or_404(Author, pk=author_id)
-    return render(request, "author_info.html", {"author": author})
+    num_confs = {}
+
+    for pub in author.publication_set.all():
+        rating = pub.paper.conference.ggs_rating
+        if rating in num_confs:
+            num_confs[rating] += 1
+        else:
+            num_confs[rating] = 1
+
+    return render(
+        request, "author_info.html", {"author": author, "num_confs": num_confs}
+    )
 
 
 def upload(request):

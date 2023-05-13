@@ -5,3 +5,10 @@
   <li>Cited by: {{ author.cited_by_count }}</li>
   <li>H-index: {{ author.h_index }}</li>
 </ul>
+
+<h1> DISTRIBUZIONE CONFERENZE </h1>
+<ul>
+  {% for rating, count in num_confs.items %}
+  <li>{{ rating }}: {{ count }}</li>
+  {% endfor %}
+</ul>
