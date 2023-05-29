@@ -1,3 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}
+Conferences - Produzione Scientifica
+{% endblock title %}
+
+{% block content %}
 <h1>List of Conferences</h1>
 
 <img src="{% url 'conferences_distribution.png' %}" />
@@ -22,3 +29,4 @@
     {% endfor %}
   </tbody>
 </table>
+{% endblock content %}
