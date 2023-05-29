@@ -1,5 +1,11 @@
-<h1>List of affiliations</h1>
+{% extends "base.html" %}
 
+{% block title %}
+Affiliations - Produzione Scientifica
+{% endblock title %}
+
+{% block content %}
+<h1>List of affiliations</h1>
 
 <table>
   <thead>
@@ -23,3 +29,4 @@
     {% endfor %}
   </tbody>
 </table>
+{% endblock content %}
