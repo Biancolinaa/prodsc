@@ -1,0 +1,25 @@
+<h1>List of affiliations</h1>
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Country</th>
+      <th>Num. of Authors</th>
+      <th>Average H-Index</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for a, h_index in affiliations %}
+    <tr>
+      <td>
+        {{ a.name }}
+      </td>
+      <td>{{ a.country }}</td>
+      <td>{{ a.author_count }}</td>
+      <td>{{ h_index }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

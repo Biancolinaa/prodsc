@@ -2,6 +2,7 @@ import pandas as pd
 import math
 from io import BytesIO
 
+from django.db.models import Q, Count, Avg, StdDev, F
 from django.shortcuts import render, get_object_or_404
 
 from .models import Author, Conference, Publication, Affiliation, Paper
@@ -20,6 +21,21 @@ def conferences(request):
         {
             "conferences": conferences,
         },
+    )
+
+
+def affiliations(request):
+    affiliations = Affiliation.objects.all()
+    h_indexes_avgs = []
+    for a in affiliations:
+        h_index = a.publication_set.aggregate(Avg("author__h_index"))[
+            "author__h_index__avg"
+        ]
+        h_indexes_avgs.append("{:.2f}".format(h_index) if h_index is not None else "-")
+    return render(
+        request,
+        "affiliations.html",
+        {"affiliations": zip(affiliations, h_indexes_avgs)},
     )
 
 

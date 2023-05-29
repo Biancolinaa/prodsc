@@ -8,6 +8,7 @@ urlpatterns = [
     path("author/<int:author_id>", views.author_info, name="author_info"),
     path("upload", views.upload, name="upload"),
     path("conferences", views.conferences, name="conferences"),
+    path("affiliations", views.affiliations, name="affiliations"),
     path(
         "conferences/distribution.png",
         images.conferences_distribution,
