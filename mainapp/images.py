@@ -49,3 +49,22 @@ def paper_rating_distribution(request):
     ax.plot(ratings, avgs)
 
     return create_image(f)
+
+
+def h_index_vs_conference_rating(request):
+    data = {'h_index': [], 'ratings': []}
+    for pub in Publication.objects.all():
+        if pub.author.h_index > 0:
+            data["h_index"].append(pub.author.h_index)
+            data["ratings"].append(pub.paper.conference.ggs_rating)
+    
+    df = pd.DataFrame(data)
+    
+    ratings = ["A++", "A+", "A", "A-", "B", "B-"]
+    df['ratings'] = pd.Categorical(df["ratings"], reversed(ratings))
+    df.sort_values(by=['ratings'], inplace=True)
+    f = figure.Figure()
+    ax = f.add_subplot()
+    ax.scatter(df['h_index'], df["ratings"])
+
+    return create_image(f)

@@ -19,4 +19,9 @@ urlpatterns = [
         images.paper_rating_distribution,
         name="paper_rating_distribution.png",
     ),
+    path(
+        "metrics/h_index_vs_conference_rating.png",
+        images.h_index_vs_conference_rating,
+        name="h_index_vs_conference_rating"
+    )
 ]
