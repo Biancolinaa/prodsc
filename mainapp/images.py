@@ -30,23 +30,28 @@ def conferences_distribution(request):
 
 
 def paper_rating_distribution(request):
-    xs = []
-    ys = []
-    avgs = []
+    data = {'cited_by_count': [], 'ratings': []}
     ratings = ["A++", "A+", "A", "A-", "B", "B-"]
     for rating in ratings:
         papers = Paper.objects.filter(conference__ggs_rating=rating)
-        avgs.append(np.mean([p.cited_by_count for p in papers]))
         for p in papers:
-            xs.append(rating)
-            ys.append(p.cited_by_count)
+            data["cited_by_count"].append(p.cited_by_count)
+            data["ratings"].append(rating)
 
+    df = pd.DataFrame(data)
+    df['ratings'] = pd.Categorical(df["ratings"], ratings)
+    
     f = figure.Figure()
     ax = f.add_subplot()
-    ax.set_yscale("log")
 
-    ax.scatter(xs, ys)
-    ax.plot(ratings, avgs)
+    means = df.groupby('ratings')['cited_by_count'].mean()
+    ax.plot(range(1, 6+1), list(means), color='red')
+
+    ax.violinplot(
+        [df[df["ratings"] == r]['cited_by_count'] for r in ratings])
+
+    ax.set_yscale('symlog')
+    ax.legend(['Media delle citazioni', 'Numero di citazioni'])
 
     return create_image(f)
 
@@ -61,10 +66,18 @@ def h_index_vs_conference_rating(request):
     df = pd.DataFrame(data)
     
     ratings = ["A++", "A+", "A", "A-", "B", "B-"]
-    df['ratings'] = pd.Categorical(df["ratings"], reversed(ratings))
-    df.sort_values(by=['ratings'], inplace=True)
+    df['ratings'] = pd.Categorical(df["ratings"], ratings)
     f = figure.Figure()
     ax = f.add_subplot()
-    ax.scatter(df['h_index'], df["ratings"])
+    ax.set_xticks(range(1, 6+1))
+    ax.set_xticklabels(ratings)
+
+    means = df.groupby('ratings')['h_index'].mean()
+    ax.plot(range(1, 6+1), list(means), color='red')
+
+    ax.violinplot(
+        [df[df["ratings"] == r]['h_index'] for r in ratings])
+
+    ax.legend(['Average $h$-index', '$h$-index'])
 
     return create_image(f)
