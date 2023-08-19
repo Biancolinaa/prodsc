@@ -1,20 +1,19 @@
 import pandas as pd
-import math
 import matplotlib.figure as figure
-import numpy as np
+import matplotlib.pyplot as plt
 
-from django.db.models import Q, Count, Avg, StdDev
-from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
+from django.db.models import Sum, F, ExpressionWrapper, FloatField
 
 from .models import Author, Conference, Publication, Affiliation, Paper
-from .forms import UploadForm
 
 
 def create_image(fig):
     resp = HttpResponse(content_type="image/png")
     fig.savefig(resp)
     return resp
+
+# ------------ Conference metrics
 
 
 def conferences_distribution(request):
@@ -40,7 +39,7 @@ def paper_rating_distribution(request):
 
     df = pd.DataFrame(data)
     df['ratings'] = pd.Categorical(df["ratings"], ratings)
-    
+
     f = figure.Figure()
     ax = f.add_subplot()
 
@@ -62,9 +61,9 @@ def h_index_vs_conference_rating(request):
         if pub.author.h_index > 0:
             data["h_index"].append(pub.author.h_index)
             data["ratings"].append(pub.paper.conference.ggs_rating)
-    
+
     df = pd.DataFrame(data)
-    
+
     ratings = ["A++", "A+", "A", "A-", "B", "B-"]
     df['ratings'] = pd.Categorical(df["ratings"], ratings)
     f = figure.Figure()
@@ -79,5 +78,79 @@ def h_index_vs_conference_rating(request):
         [df[df["ratings"] == r]['h_index'] for r in ratings])
 
     ax.legend(['Average $h$-index', '$h$-index'])
+
+    return create_image(f)
+
+# ------------ Affiliation metrics
+
+
+def num_authors_per_country(request):
+    f = figure.Figure()
+    ax = f.add_subplot()
+
+    qs = Affiliation.objects.values("country").annotate(num_authors=Sum("author_count")).order_by("-num_authors")
+    xs = []
+    ys = []
+    for aff in qs[:10]:
+        xs.append(aff['country'])
+        ys.append(aff['num_authors'])
+
+    bars = ax.bar(xs, ys)
+    ax.bar_label(bars, labels=[f'{x / 1e6:.2f}e6' for x in ys])
+    ax.set_xticks(xs, labels=xs, rotation=45, ha='right')
+    f.tight_layout()
+
+    return create_image(f)
+
+
+def num_documents_per_country(request):
+    f = figure.Figure()
+    ax = f.add_subplot()
+
+    qs = Affiliation.objects.values("country").annotate(num_docs=Sum("document_count")).order_by("-num_docs")
+    xs = []
+    ys = []
+    for aff in qs[:10]:
+        xs.append(aff['country'])
+        ys.append(aff['num_docs'])
+
+    bars = ax.bar(xs, ys)
+    ax.bar_label(bars, labels=[f'{x / 1e6:.2f}e6' for x in ys])
+    ax.set_xticks(xs, labels=xs, rotation=45, ha='right')
+    f.tight_layout()
+
+    return create_image(f)
+
+
+def productivity_per_country(request):
+    f = figure.Figure()
+    ax = f.add_subplot()
+
+    qs = Affiliation.objects.values("country") \
+        .annotate(
+            num_docs=Sum("document_count"),
+            num_authors=Sum("author_count"),
+            # The * 1.0 is to convert to float
+            productivity=ExpressionWrapper(F('num_authors') * 1.0 / F('num_docs'), output_field=FloatField())) \
+        .order_by("-productivity")
+
+    countries = [aff['country'] for aff in Affiliation.objects.values("country")
+                 .annotate(num_docs=Sum("document_count"))
+                 .order_by("-num_docs")[:10]]
+    countries += [aff['country'] for aff in Affiliation.objects.values("country")
+                  .annotate(num_authors=Sum("author_count"))
+                  .order_by("-num_authors")[:10]]
+    xs = []
+    ys = []
+    for aff in qs:
+        if aff['country'] in countries:
+            xs.append(aff['country'])
+            ys.append(aff['productivity'])
+            print(aff)
+
+    bars = ax.bar(xs, ys)
+    ax.bar_label(bars, labels=[f'{y:.2f}' for y in ys])
+    ax.set_xticks(xs, labels=xs, rotation=45, ha='right')
+    f.tight_layout()
 
     return create_image(f)

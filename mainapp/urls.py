@@ -15,13 +15,28 @@ urlpatterns = [
         name="conferences_distribution.png",
     ),
     path(
-        "papers/paper_rating_distribution.png",
+        "conferences/paper_rating_distribution.png",
         images.paper_rating_distribution,
         name="paper_rating_distribution.png",
     ),
     path(
-        "metrics/h_index_vs_conference_rating.png",
+        "conferences/h_index_vs_conference_rating.png",
         images.h_index_vs_conference_rating,
         name="h_index_vs_conference_rating"
+    ),
+    path(
+        "affiliations/num_authors_per_country.png",
+        images.num_authors_per_country,
+        name="num_authors_per_country"
+    ),
+    path(
+        "affiliations/num_documents_per_country.png",
+        images.num_documents_per_country,
+        name="num_documents_per_country"
+    ),
+    path(
+        "affiliations/productivity_per_country.png",
+        images.productivity_per_country,
+        name="productivity_per_country"
     )
 ]
