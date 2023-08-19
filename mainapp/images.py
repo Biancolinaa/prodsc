@@ -28,11 +28,12 @@ def conferences_distribution(request):
     return create_image(f)
 
 
-def paper_rating_distribution(request):
+def _paper_rating_distribution(minimum_citations=0, scale='symlog', ylim=(-0.5, 300)):
     data = {'cited_by_count': [], 'ratings': []}
     ratings = ["A++", "A+", "A", "A-", "B", "B-"]
     for rating in ratings:
-        papers = Paper.objects.filter(conference__ggs_rating=rating)
+        papers = Paper.objects.filter(conference__ggs_rating=rating, cited_by_count__gte=minimum_citations)
+
         for p in papers:
             data["cited_by_count"].append(p.cited_by_count)
             data["ratings"].append(rating)
@@ -49,10 +50,21 @@ def paper_rating_distribution(request):
     ax.violinplot(
         [df[df["ratings"] == r]['cited_by_count'] for r in ratings])
 
-    ax.set_yscale('symlog')
+    ax.set_xticks(range(1, 6+1))
+    ax.set_xticklabels(ratings)
+    ax.set_yscale(scale)
+    ax.set_ylim(ylim)
     ax.legend(['Media delle citazioni', 'Numero di citazioni'])
 
     return create_image(f)
+
+
+def paper_rating_distribution(request):
+    return _paper_rating_distribution()
+
+
+def paper_rating_distribution_impact(request):
+    return _paper_rating_distribution(minimum_citations=40, scale='linear', ylim=(30, 300))
 
 
 def h_index_vs_conference_rating(request):

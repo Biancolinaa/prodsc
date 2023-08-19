@@ -20,6 +20,11 @@ urlpatterns = [
         name="paper_rating_distribution.png",
     ),
     path(
+        "conferences/paper_rating_distribution_impact.png",
+        images.paper_rating_distribution_impact,
+        name="paper_rating_distribution_impact.png",
+    ),
+    path(
         "conferences/h_index_vs_conference_rating.png",
         images.h_index_vs_conference_rating,
         name="h_index_vs_conference_rating"
