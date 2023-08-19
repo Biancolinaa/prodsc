@@ -166,3 +166,77 @@ def productivity_per_country(request):
     f.tight_layout()
 
     return create_image(f)
+
+
+def author_citations_vs_affiliation_size(request):
+    f = figure.Figure()
+
+    groups = {
+        '≤10': [],
+        '10-100': [],
+        '100-1k': [],
+        '1k-10k': [],
+        '>10k': [],
+    }
+
+    for pub in Publication.objects.all():
+        size = pub.affiliation.author_count
+        if size <= 10:
+            bucket = '≤10'
+        elif size <= 100:
+            bucket = '10-100'
+        elif size <= 1000:
+            bucket = '100-1k'
+        elif size <= 10000:
+            bucket = '1k-10k'
+        else:
+            bucket = '>10k'
+
+        groups[bucket].append(pub.author.cited_by_count)
+
+    ax = f.add_subplot()
+
+    ax.boxplot(list(groups.values()), showfliers=False)
+
+    ax.set_xticklabels(list(groups.keys()))
+    ax.set_xlabel('Affilliation size')
+    ax.set_ylabel('Number of citations')
+
+    return create_image(f)
+
+
+def author_h_index_vs_affiliation_size(request):
+    f = figure.Figure()
+
+    groups = {
+        '≤10': [],
+        '10-100': [],
+        '100-1k': [],
+        '1k-10k': [],
+        '>10k': [],
+    }
+
+    for pub in Publication.objects.all():
+        size = pub.affiliation.author_count
+        if size <= 10:
+            bucket = '≤10'
+        elif size <= 100:
+            bucket = '10-100'
+        elif size <= 1000:
+            bucket = '100-1k'
+        elif size <= 10000:
+            bucket = '1k-10k'
+        else:
+            bucket = '>10k'
+
+        groups[bucket].append(pub.author.h_index)
+
+    ax = f.add_subplot()
+
+    ax.boxplot(list(groups.values()), showfliers=False)
+
+    ax.set_xticklabels(list(groups.keys()))
+    ax.set_xlabel('Affilliation size')
+    ax.set_ylabel('$h$-index')
+
+    return create_image(f)

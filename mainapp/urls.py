@@ -8,6 +8,7 @@ urlpatterns = [
     path("author/<int:author_id>", views.author_info, name="author_info"),
     path("upload", views.upload, name="upload"),
     path("conferences", views.conferences, name="conferences"),
+    path("conference/<int:conference_id>", views.conference_info, name="conference_info"),
     path("affiliations", views.affiliations, name="affiliations"),
     path(
         "conferences/distribution.png",
@@ -43,5 +44,15 @@ urlpatterns = [
         "affiliations/productivity_per_country.png",
         images.productivity_per_country,
         name="productivity_per_country"
+    ),
+    path(
+        "authors/author_citations_vs_affiliation_size.png",
+        images.author_citations_vs_affiliation_size,
+        name="author_citations_vs_affiliation_size"
+    ),
+    path(
+        "authors/author_h_index_vs_affiliation_size.png",
+        images.author_h_index_vs_affiliation_size,
+        name="author_h_index_vs_affiliation_size"
     )
 ]

@@ -5,10 +5,12 @@ Conferences - Produzione Scientifica
 {% endblock title %}
 
 {% block content %}
+
+<div style="width: 100%; display: flex; justify-content: center;">
+  <img style="width: 40%" src="{% url 'conferences_distribution.png' %}" />
+</div>
+
 <h1>List of Conferences</h1>
-
-<img src="{% url 'conferences_distribution.png' %}" />
-
 <table>
   <thead>
     <tr>
@@ -21,7 +23,7 @@ Conferences - Produzione Scientifica
     {% for conference in conferences %}
     <tr>
       <td>
-        <a href="">{{ conference.name }}</a>
+        <a href="{% url 'conference_info' conference.id %}">{{ conference.name }}</a>
       </td>
       <td>{{ conference.acronym }}</td>
       <td>{{ conference.ggs_rating }}</td>

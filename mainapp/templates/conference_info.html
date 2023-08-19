@@ -6,19 +6,26 @@ Info conferenza - Produzione Scientifica
 
 {% block content %}
 
-<h1>{{ author.surname }} {{ author.name }}</h1>
+<h1>{{ conference.acronym }}</h1>
+<h2><i>{{ conference.name }}</i></h2>
 
-<ul>
+<!-- <ul>
   <li>Citations: {{ author.citation_count }}</li>
   <li>Cited by: {{ author.cited_by_count }}</li>
   <li>H-index: {{ author.h_index }}</li>
 </ul>
 
-<h2> Distribuzione conferenze </h2>
+<h1> DISTRIBUZIONE CONFERENZE </h1>
 <ul>
   {% for rating, count in num_confs.items %}
   <li>{{ rating }}: {{ count }}</li>
   {% endfor %}
 </ul>
+
+name = models.CharField(max_length=200)
+acronym = models.CharField(max_length=200)
+ggs_rating = models.CharField(max_length=5)
+num_papers = models.IntegerField()
+citation_count = models.IntegerField() -->
 
 {% endblock content %}

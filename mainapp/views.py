@@ -60,6 +60,13 @@ def author_info(request, author_id):
     )
 
 
+def conference_info(request, conference_id):
+    conference = get_object_or_404(Conference, pk=conference_id)
+    return render(
+        request, "conference_info.html", {"conference": conference}
+    )
+
+
 def upload(request):
     if request.method == "GET":
         form = UploadForm()
